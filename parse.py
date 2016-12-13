@@ -8,13 +8,18 @@ from lxml import html
 
 
 def request_to_site():
-    r = requests.get('https://www.python.org/')
-    root = html.fromstring(r.text)
-    event_list = root.xpath('.//div[@class="medium-widget event-widget last"]/div/ul')
-    events = event_list[0].xpath('.//li/a/text()')
-    dates = event_list[0].xpath('.//li/time/@datetime')
-    for i in xrange(len(events)):
-        print dates[i][:10], events[i]
+    try:
+        request = requests.get('https://www.python.org/')
+        root = html.fromstring(request.text)
+        event_list = root.xpath('.//div[@class="medium-widget event-widget last"]')
+        events = event_list[0].xpath('.//li/a/text()')
+        dates = event_list[0].xpath('.//li/time/@datetime')
+        for i in xrange(len(events)):
+            print dates[i][:10], events[i]
+    except requests.exceptions.ConnectionError:
+        print "No connection to site"
+    except IndexError:
+        print "There are no Upcoming Events"
 
-
-request_to_site()
+if __name__ == '__main__':
+    request_to_site()
